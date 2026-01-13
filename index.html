@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>1217_4 PGYpedi</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pediatric CDSS - Mobile Split View</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-gray-100 h-[100dvh] w-screen flex flex-col overflow-hidden text-gray-900 font-sans">
+
+  <header class="bg-blue-600 text-white px-3 py-2 shadow-md z-20 flex justify-between items-center shrink-0 h-10">
+    <h1 class="font-bold text-lg tracking-tight">Pediatric CDSS</h1>
+    <span class="text-[10px] uppercase font-bold bg-blue-800/50 px-2 py-1 rounded border border-blue-400/30 backdrop-blur-sm">Mobile Mode</span>
+  </header>
+
+  <div class="flex flex-1 min-h-0">
+
+    <div class="flex-1 flex flex-col bg-white border-r border-gray-300 min-w-0 relative z-0">
+
+      <div class="flex items-start gap-3 p-2 bg-blue-50 border-b border-blue-100 z-10 shrink-0 shadow-sm">
+        <div class="flex-1 relative flex flex-col">
+          <div class="relative w-full group">
+            <label for="pt-age" class="absolute -top-1.5 left-2 px-1 bg-blue-50 text-[10px] font-bold text-blue-600 transition-colors group-focus-within:text-blue-700">AGE</label>
+            <input type="number" id="pt-age" inputmode="decimal" step="0.1" autocomplete="off" placeholder="0" class="w-full pl-3 pr-8 py-1.5 text-sm border border-blue-200 rounded bg-white text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-gray-300">
+            <span class="absolute right-2 top-2 text-xs text-gray-400 font-medium pointer-events-none">yr</span>
+          </div>
+          <div id="age-error-msg" class="hidden text-red-500 text-[10px] font-bold mt-1 ml-1 leading-none animate-pulse">
+            Enter 1-18
+          </div>
+        </div>
+
+        <div class="flex-1 relative flex flex-col">
+          <div class="relative w-full group">
+            <label for="pt-weight" class="absolute -top-1.5 left-2 px-1 bg-blue-50 text-[10px] font-bold text-blue-600 transition-colors group-focus-within:text-blue-700">BW</label>
+            <input type="number" id="pt-weight" inputmode="decimal" step="0.1" autocomplete="off" placeholder="0" class="w-full pl-3 pr-8 py-1.5 text-sm border border-blue-200 rounded bg-white text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all placeholder-gray-300">
+            <span class="absolute right-2 top-2 text-xs text-gray-400 font-medium pointer-events-none">kg</span>
+          </div>
+          <div id="weight-error-msg" class="hidden text-red-500 text-[10px] font-bold mt-1 ml-1 leading-none animate-pulse">
+            Enter > 5
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 p-2 border-b border-gray-100 bg-white z-10 shrink-0 shadow-sm">
+        
+        <div class="relative flex-1">
+          <input type="text" id="search-input" autocomplete="off" placeholder="Search drugs..." class="w-full pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none transition-all placeholder-gray-400" oninput="handleSearch(this.value)">
+
+          <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+
+          <button id="btn-clear-search" onclick="clearSearch()" class="absolute right-1.5 top-1.5 text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-200 transition hidden" aria-label="Clear search">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div id="mode-switch-track" onclick="toggleSearchMode()" class="w-20 h-9 bg-blue-100/80 rounded-lg p-1 relative cursor-pointer select-none shadow-inner overflow-hidden transition-colors duration-300 shrink-0">
+          <div class="absolute left-0 top-0 bottom-0 w-1/2 flex items-center justify-center text-[10px] font-bold text-purple-700 z-0 pl-1 tracking-wide">Class</div>
+          <div class="absolute right-0 top-0 bottom-0 w-1/2 flex items-center justify-center text-[10px] font-bold text-blue-700 z-0 pr-1 tracking-wide">Drug</div>
+
+          <div id="toggle-slider" class="relative z-10 w-[calc(50%-2px)] h-full bg-white rounded shadow-sm flex items-center justify-center transition-all duration-300 ease-out text-blue-600">
+            <span id="knob-icon-drug" class="absolute inset-0 flex items-center justify-center transition-opacity duration-300 opacity-100">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+            </span>
+            <span id="knob-icon-class" class="absolute inset-0 flex items-center justify-center transition-opacity duration-300 opacity-0 text-purple-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div id="list-container" class="flex-1 overflow-y-auto p-0 pb-20 custom-scrollbar divide-y divide-gray-100">
+        </div>
+    </div>
+
+    <div class="w-[72px] bg-gray-50 border-l border-gray-200 flex flex-col gap-2 p-2 overflow-y-auto shrink-0 z-10 shadow-[inset_2px_0_5px_rgba(0,0,0,0.05)]">
+      <div class="text-[10px] text-center text-gray-400 font-bold uppercase mb-1 tracking-wider">Load</div>
+      <button onclick="loadSet('A')" id="btn-set-A" class="slot-btn h-14 w-full rounded-lg border-2 border-gray-200 bg-white flex flex-col items-center justify-center transition active:scale-95 hover:border-blue-300 relative">
+        <span class="text-base font-bold text-gray-400">A</span>
+        <div class="w-1.5 h-1.5 rounded-full bg-gray-200 mt-1 indicator transition-colors"></div>
+      </button>
+      <button onclick="loadSet('B')" id="btn-set-B" class="slot-btn h-14 w-full rounded-lg border-2 border-gray-200 bg-white flex flex-col items-center justify-center transition active:scale-95 hover:border-blue-300 relative">
+        <span class="text-base font-bold text-gray-400">B</span>
+        <div class="w-1.5 h-1.5 rounded-full bg-gray-200 mt-1 indicator transition-colors"></div>
+      </button>
+      <button onclick="loadSet('C')" id="btn-set-C" class="slot-btn h-14 w-full rounded-lg border-2 border-gray-200 bg-white flex flex-col items-center justify-center transition active:scale-95 hover:border-blue-300 relative">
+        <span class="text-base font-bold text-gray-400">C</span>
+        <div class="w-1.5 h-1.5 rounded-full bg-gray-200 mt-1 indicator transition-colors"></div>
+      </button>
+      <button onclick="loadSet('D')" id="btn-set-D" class="slot-btn h-14 w-full rounded-lg border-2 border-gray-200 bg-white flex flex-col items-center justify-center transition active:scale-95 hover:border-blue-300 relative">
+        <span class="text-base font-bold text-gray-400">D</span>
+        <div class="w-1.5 h-1.5 rounded-full bg-gray-200 mt-1 indicator transition-colors"></div>
+      </button>
+    </div>
+  </div>
+
+  <div class="h-[55vh] bg-white border-t-2 border-green-500 shadow-[0_-3px_15px_rgba(0,0,0,0.1)] flex flex-col z-30 shrink-0">
+    
+    <div class="bg-gray-800 text-white px-3 py-2 flex justify-between items-center shrink-0 shadow-md">
+      <div class="flex items-center">
+        <span class="font-bold text-sm tracking-wide">Results</span>
+        
+        <button id="btn-alert-toggle" onclick="toggleAlert()" class="ml-3 hidden relative group focus:outline-none transition-transform hover:scale-110">
+           </button>
+      </div>
+      
+      <div class="flex items-center gap-1.5">
+        <span class="text-[10px] text-gray-400 uppercase mr-1 font-bold">Save</span>
+        <button onclick="saveToSet('A')" class="w-7 h-7 rounded bg-gray-700 hover:bg-green-600 border border-gray-600 text-xs font-bold transition flex items-center justify-center text-gray-200">A</button>
+        <button onclick="saveToSet('B')" class="w-7 h-7 rounded bg-gray-700 hover:bg-green-600 border border-gray-600 text-xs font-bold transition flex items-center justify-center text-gray-200">B</button>
+        <button onclick="saveToSet('C')" class="w-7 h-7 rounded bg-gray-700 hover:bg-green-600 border border-gray-600 text-xs font-bold transition flex items-center justify-center text-gray-200">C</button>
+        <button onclick="saveToSet('D')" class="w-7 h-7 rounded bg-gray-700 hover:bg-green-600 border border-gray-600 text-xs font-bold transition flex items-center justify-center text-gray-200">D</button>
+      </div>
+    </div>
+
+    <div id="alert-box" class="bg-red-50 border-b border-red-200 p-2 hidden shrink-0 transition-all duration-300 text-xs text-red-700 shadow-inner"></div>
+
+    <div class="flex-1 overflow-y-auto overflow-x-hidden w-full p-0 bg-white relative custom-scrollbar">
+      <table id="result-body" class="w-full text-left border-collapse text-sm">
+         </table>
+      
+      <div id="empty-msg" class="absolute inset-0 flex flex-col items-center justify-center text-gray-300 pointer-events-none select-none">
+        <svg class="w-12 h-12 mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+        <div class="text-center text-xs font-medium">Select drugs from list<br>or Load Set A-D</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+    <script  src="./script.js"></script>
+
+  </body>
+  
+</html>

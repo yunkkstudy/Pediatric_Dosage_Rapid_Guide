@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================
+   1. 捲動條美化 (Custom Scrollbar)
+   ========================================= */
+.custom-scrollbar {
+  /* [關鍵] 預留滾動條空間，防止內容寬度跳動 */
+  scrollbar-gutter: stable;
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+  
+  overflow-y: auto;
+}
+
+/* Webkit (Chrome, Edge, Safari) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* gray-300 */
+  border-radius: 20px;
+  border: 1px solid transparent; /* 透明邊框製造懸浮感 */
+  background-clip: content-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8; /* gray-400 */
+}
+
+/* =========================================
+   2. Slot 按鈕狀態 (State Overrides)
+   使用 !important 覆蓋 Tailwind 的 Utility Class
+   ========================================= */
+.slot-filled {
+  border-color: #3b82f6 !important;     /* blue-500 */
+  background-color: #eff6ff !important; /* blue-50 */
+}
+
+.slot-filled span {
+  color: #1d4ed8 !important;            /* blue-700 */
+}
+
+.slot-filled .indicator {
+  background-color: #3b82f6 !important; /* blue-500 */
+}
+
+/* =========================================
+   3. 拖曳排序樣式 (SortableJS)
+   ========================================= */
+.sortable-ghost {
+  opacity: 0.4;
+  background-color: #e5e7eb; /* gray-200 */
+}
+
+.sortable-chosen {
+  background-color: #eff6ff; /* blue-50 */
+}
+
+/* 拖曳手勢優化 */
+#result-body tr {
+  cursor: grab;
+  touch-action: manipulation; /* 優化觸控裝置體驗 */
+}
+
+#result-body tr:active {
+  cursor: grabbing;
+}
+
+/* =========================================
+   4. 全域設定 (Global)
+   ========================================= */
+
+/* 禁止文字選取 (防止拖曳時誤選文字) */
+body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* [重要修正] 強制允許輸入框內的文字可選取、可編輯 */
+input, textarea {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+}
